@@ -27,6 +27,11 @@ namespace CarvedRock.ViewModels
                 Items.Add(newItem);
                 await DataStore.AddItemAsync(newItem);
             });
+
+            MessagingCenter.Subscribe<AddCategory, string>(this, "AddCategory", async (obj, category) =>
+            {
+                 await DataStore.AddCategoryAsync(category);
+            });
         }
 
         async Task ExecuteLoadItemsCommand()

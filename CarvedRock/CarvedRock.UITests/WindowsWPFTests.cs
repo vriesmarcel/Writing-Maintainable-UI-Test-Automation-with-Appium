@@ -75,6 +75,7 @@ namespace CarvedRock.UITests
                 Timeout = TimeSpan.FromSeconds(60),
                 PollingInterval = TimeSpan.FromMilliseconds(1000)
             };
+
             wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
  
             var elementfound = wait.Until(d =>

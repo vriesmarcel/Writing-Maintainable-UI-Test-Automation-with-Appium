@@ -198,7 +198,7 @@ namespace CarvedRock.UITests
             
 
             // connecting to a device or emulator
-            capabilities.AddAdditionalCapability(MobileCapabilityType.DeviceName, "emulator-5554");
+            capabilities.AddAdditionalCapability(MobileCapabilityType.DeviceName, "2471736c36037ece");
             capabilities.AddAdditionalCapability(MobileCapabilityType.AutomationName, "UiAutomator2");
             // specifyig which app we want to install and launch
             var currentPath = Directory.GetCurrentDirectory();

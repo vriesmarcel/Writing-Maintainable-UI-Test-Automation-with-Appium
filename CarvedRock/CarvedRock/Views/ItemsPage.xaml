@@ -10,6 +10,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Clicked="AddItem_Clicked" AutomationId="Add" IconImageSource="add.png" />
+        <ToolbarItem Text="AddCategory" Clicked="ToolbarItem_Clicked" AutomationId="AddCategory" IconImageSource="addCategory.png" />
     </ContentPage.ToolbarItems>
 
     <StackLayout>
@@ -42,11 +43,19 @@
                                 LineBreakMode="NoWrap" 
                                 Style="{DynamicResource ListItemTextStyle}" 
                                 FontSize="16" />
+                            <StackLayout Orientation="Horizontal">
                             <Label Text="{Binding Description}" 
                                 d:Text="Item descripton"
                                 LineBreakMode="NoWrap"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
                                 FontSize="13" />
+
+                                <Label Text="{Binding Category}" 
+                                d:Text="Item Category"
+                                LineBreakMode="NoWrap"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="13" />
+                            </StackLayout>
                         </StackLayout>
 
                 </DataTemplate>

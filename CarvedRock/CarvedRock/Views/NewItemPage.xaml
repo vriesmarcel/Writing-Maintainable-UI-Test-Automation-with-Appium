@@ -22,7 +22,9 @@
             <Entry Text="{Binding Item.Text}" AutomationId="ItemText" d:Text="Item name" FontSize="Small" />
             <Label Text="Description" FontSize="Medium" />
             <Editor Text="{Binding Item.Description}" AutomationId="ItemDescription" d:Text="Item description" FontSize="Small" Margin="0" />
-
+            <Label Text="Category"/>
+            <Picker x:Name="CategoryList" ItemsSource="{Binding Categories}" AutomationId="ItemCategory">
+            </Picker>
         </StackLayout>
     </ContentPage.Content>
     

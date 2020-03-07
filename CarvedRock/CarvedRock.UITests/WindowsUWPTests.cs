@@ -22,80 +22,17 @@ namespace CarvedRock.UITests
     public class WindowsUWPTests
     {
         static TestContext ctx;
-        private static  WindowsDriver<WindowsElement> driver;
         [ClassInitialize]
         static public void Initialize(TestContext context)
         {
             ctx = context;
-            var capabilities = new AppiumOptions();
-            capabilities.AddAdditionalCapability(MobileCapabilityType.App , "8b831c56-bc54-4a8b-af94-a448f80118e7_sezxftbtgh66j!App");
-            capabilities.AddAdditionalCapability(MobileCapabilityType.PlatformName, "Windows");
-            capabilities.AddAdditionalCapability(MobileCapabilityType.DeviceName, "WindowsPC");
-            
-            var _appiumLocalService = new AppiumServiceBuilder().UsingAnyFreePort().Build();
-            _appiumLocalService.Start(); 
-            //driver = new WindowsDriver<WindowsElement>(_appiumLocalService, capabilities);
-            driver = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723/wd/hub"), capabilities);
-            //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
-
         }
 
-        [TestMethod]
-        public void ScrollToEndOfListUsingRemoteTouchScreenFlick()
-        {
-            driver.LaunchApp();
-
-            var touchScreen = new RemoteTouchScreen(driver);
-
-            touchScreen.Flick(0, 160);
-            touchScreen.Flick(0, 160);
-            
-            driver.CloseApp();
-
-        }
-
-        [TestMethod]
-        public void ScrollToEndOfListUsingRemoteTouchScreenScroll()
-        {
-            driver.LaunchApp();
-
-            var touchScreen = new RemoteTouchScreen(driver);
-            touchScreen.Scroll(0, -300);
-            touchScreen.Scroll(0, -300);
-
-            driver.CloseApp();
-
-        }
-
-        [TestMethod]
-        public void GetUIDocument()
-        {
-            driver.LaunchApp();
-            var document = driver.PageSource;
-            ctx.WriteLine(document);
-
-        }
-
-        //[TestMethod]
-        //public void TapElementWeFind()
-        //{
-        //    driver.LaunchApp();
-            
-        //    var ListView = driver.FindElement(MobileBy.ClassName("ListView"));
-        //    var clickablePoint = ListView.GetAttribute("ClickablePoint");
-        //    driver.getPro
-        //    var attributesONElement = ListView.GetProperty("attributes");
-
-        //    ListView.Click();
-
-        ////    var stop = driver.StopRecordingScreen();
-
-        //    driver.CloseApp();
-        //}
+  
         [TestMethod]
         public void ScrollToEndOfListUsingPointerInputDevice()
         {
-            driver.LaunchApp();
+            var driver = startApp();
             var ListView = driver.FindElement(MobileBy.ClassName("ListView"));
            // ListView.GetAttribute
             // set start point
@@ -112,17 +49,14 @@ namespace CarvedRock.UITests
 
         }
 
-       
-
         [TestMethod]
         public void CheckMasterDetailAndBack()
         {
-            driver.LaunchApp();
+            var driver = startApp(); 
+            
             // tap on second item
-            var el1 = driver.FindElementByAccessibilityId("Second item");
-            TouchAction a = new TouchAction(driver);
-            a.Tap(el1);
-
+            var el1 = driver.FindElementByName("Second item");
+  
             el1.Click();
             var el2 = driver.FindElementByAccessibilityId("ItemText");
             Assert.IsTrue(el2.Text == "Second item");
@@ -130,7 +64,7 @@ namespace CarvedRock.UITests
             var backButton = driver.FindElementByAccessibilityId("Back");
             backButton.Click();
 
-            var el3 = driver.FindElementByAccessibilityId("Fourth item");
+            var el3 = driver.FindElementByName("Fourth item");
             Assert.IsTrue(el3 != null);
 
             driver.CloseApp();
@@ -140,12 +74,12 @@ namespace CarvedRock.UITests
         [TestMethod]
         public void AddNewItem()
         {
-            driver.LaunchApp();
+            var driver = startApp();
+            
             // tap on second item
             var el1 = driver.FindElementByAccessibilityId("Add");
-            TouchAction a = new TouchAction(driver);
-            a.Tap(el1);
             el1.Click();
+           
             var elItemText = driver.FindElementByAccessibilityId("ItemText");
             elItemText.Clear();
             elItemText.SendKeys("This is a new Item");
@@ -159,27 +93,23 @@ namespace CarvedRock.UITests
 
             WaitForProgressbarToDisapear(driver);
 
-            var touchScreen = new RemoteTouchScreen(driver);
-            Boolean found = false;
-            var maxretries = 5;
-            int count = 0;
-            while (!found && count++ < maxretries)
+            var listview = driver.FindElementByAccessibilityId("ItemsListView");
+
+            var wait = new DefaultWait<WindowsDriver<WindowsElement>>(driver)
             {
-            // Good value typically goes around 160 - 200 pixels with diminishing delta on the bigger values
-                touchScreen.Flick(0, 180);
-                try
-                {
-                    var el3 = driver.FindElementByAccessibilityId("This is a new Item");
-                    found = el3 != null;
-                }
-                catch(Exception)
-                { }
-            }
-            Assert.IsTrue(found);
+                Timeout = TimeSpan.FromSeconds(60),
+                PollingInterval = TimeSpan.FromMilliseconds(500)
+            };
+            wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
 
+            var elementfound = wait.Until(d =>
+            {
+                FlickUp(driver, listview);
+                return d.FindElementByName("This is a new Item");
+            });
 
-            driver.CloseApp();
-
+            Assert.IsTrue(elementfound!=null);
+            driver.Close();
         }
 
         private void WaitForProgressbarToDisapear(WindowsDriver<WindowsElement> driver)
@@ -190,10 +120,26 @@ namespace CarvedRock.UITests
                 PollingInterval = TimeSpan.FromMilliseconds(500)
             };
             wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-            wait.Until(d => d.FindElementByAccessibilityId("Second item"));
+            wait.Until(d => d.FindElementByName("Second item"));
         }
 
-        private void CreateScreenshot()
+        public WindowsDriver<WindowsElement> startApp()
+        {
+
+            var capabilities = new AppiumOptions();
+            capabilities.AddAdditionalCapability(MobileCapabilityType.App, "8b831c56-bc54-4a8b-af94-a448f80118e7_sezxftbtgh66j!App");
+            capabilities.AddAdditionalCapability(MobileCapabilityType.PlatformName, "Windows");
+            capabilities.AddAdditionalCapability(MobileCapabilityType.DeviceName, "WindowsPC");
+
+            var _appiumLocalService = new AppiumServiceBuilder().UsingAnyFreePort().Build();
+            _appiumLocalService.Start();
+            var driver = new WindowsDriver<WindowsElement>(_appiumLocalService, capabilities);
+            //var driver = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723/wd/hub"), capabilities);
+            //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            return driver;
+        }
+
+        private void CreateScreenshot(WindowsDriver<WindowsElement>  driver)
         {
             var screenshot = driver.GetScreenshot();
             screenshot.SaveAsFile("startScreen.png", OpenQA.Selenium.ScreenshotImageFormat.Png);
@@ -206,7 +152,7 @@ namespace CarvedRock.UITests
             ActionSequence FlickUp = new ActionSequence(input);
             FlickUp.AddAction(input.CreatePointerMove(element, 0, 0, TimeSpan.Zero));
             FlickUp.AddAction(input.CreatePointerDown(MouseButton.Left));
-            FlickUp.AddAction(input.CreatePointerMove(element, 0, -600, TimeSpan.FromMilliseconds(200)));
+            FlickUp.AddAction(input.CreatePointerMove(element, 0, -300, TimeSpan.FromMilliseconds(200)));
             FlickUp.AddAction(input.CreatePointerUp(MouseButton.Left));
             driver.PerformActions(new List<ActionSequence>() { FlickUp });
         }

@@ -10,6 +10,8 @@ namespace CarvedRock.Services
     {
         static List<Item> items;
 
+        public static MockDataStore Current { get; internal set; }
+
         public MockDataStore()
         {
             if (items == null)
