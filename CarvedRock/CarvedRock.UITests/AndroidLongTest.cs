@@ -15,6 +15,7 @@ namespace CarvedRock.UITests
     [TestClass]
     public class AndroidLongTest
     {
+
         [TestMethod]
         public void AddNewItemWithNewCategory()
         {
@@ -71,11 +72,6 @@ namespace CarvedRock.UITests
             carvedrockApplication.StopApp();
         }
 
-  
-  
- 
-
-    
-        
+     
     }
 }
