@@ -18,44 +18,33 @@ namespace CarvedRock.UITests
         [TestMethod]
         public void AddNewItemWithNewCategory()
         {
-            // Arrange
+            var itemName = "New item";
+            var detail = "Detail text";
+            var category = "New Category";
+            // Arrange, Act and Assert
             var carvedrockApplication = new CarvedRockApplication();
-            carvedrockApplication.Start();
-
-
-            // Act
-            carvedrockApplication.AddNewCategory();
-            //create new item
-            carvedrockApplication.CreateNewItemWithNewCategory();
-
-            //wait for progress bar to disapear
-            carvedrockApplication.WaitForProgressBar();
-
-            var elementfound = carvedrockApplication.IsElementOnHomeScreen("This is a new Item");
-
-            // Assert
-            Assert.IsTrue(elementfound);
+            Assert.IsTrue(carvedrockApplication.Start()
+                .NavigateToNewCategory()
+                .AddNewCategory(category)
+                .NavigateToNewItem()
+                .AddNewItemWithNewCategory(itemName, detail, category)
+                .IsElementOnHomeScreen(itemName));
 
             carvedrockApplication.StopApp();
         }
         [TestMethod]
         public void AddNewItem()
         {
-            // Arrange
+            var itemName = "New item";
+            var detail = "Detail text";
+            // Arrange, Act
             var carvedrockApplication = new CarvedRockApplication();
-            carvedrockApplication.Start();
-
-            // Act
-            carvedrockApplication.AddNewItem();
-
-            //wait for progress bar to disapear
-            carvedrockApplication.WaitForProgressBar();
-
-
-            var elementfound = carvedrockApplication.IsElementOnHomeScreen("This is a new Item");
+            var homescreen = carvedrockApplication.Start()
+                .NavigateToNewItem()
+                .AddNewItem(itemName, detail);
 
             // Assert
-            Assert.IsTrue(elementfound);
+            Assert.IsTrue(homescreen.IsElementOnHomeScreen(itemName));
 
             carvedrockApplication.StopApp();
 
@@ -68,13 +57,13 @@ namespace CarvedRock.UITests
             carvedrockApplication.Start();
 
             // Act
-            carvedrockApplication.SelectItemOnHomescreen("Second item");
+            var detail = carvedrockApplication.SelectItemOnHomescreen("Second item");
 
             // Assert
-            Assert.IsTrue(carvedrockApplication.IsDetailShown("Second item"));
+            Assert.IsTrue(detail.IsDetailShown("Second item"));
 
             // Act
-            carvedrockApplication.NavigateBack();
+            detail.NavigateBack();
 
             // Assert
             Assert.IsTrue(carvedrockApplication.IsElementOnHomeScreen("Fourth item"));

@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using CarvedRock.UITests.PageObjects;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Android;
 using OpenQA.Selenium.Appium.Enums;
@@ -17,15 +18,20 @@ namespace CarvedRock.UITests
         public CarvedRockApplication()
         {
         }
-
-        internal void Start()
+        public CarvedRockApplication(AndroidDriver<AppiumWebElement> driver)
+        {
+            _driver = driver;
+        }
+        internal CarvedRockApplication Start()
         {
             _driver = StartApp();
+            return this;
         }
 
-        internal void StopApp()
+        internal CarvedRockApplication StopApp()
         {
             _driver.CloseApp();
+            return this;
         }
         private static AndroidDriver<AppiumWebElement> StartApp()
         {
@@ -57,24 +63,30 @@ namespace CarvedRock.UITests
             return driver;
         }
 
-       
-
-        internal void NavigateBack()
-        {
-            _driver.PressKeyCode(AndroidKeyCode.Back);
-        }
-
-        internal bool IsDetailShown(string itemName)
-        {
-            var el2 = _driver.FindElement(MobileBy.AccessibilityId("ItemText"));
-            return el2.Text == itemName;
-
-        }
-
-        internal void SelectItemOnHomescreen(string itemName)
+  
+        internal DetailsScreen SelectItemOnHomescreen(string itemName)
         {
             var el1 = _driver.FindElement(MobileBy.AccessibilityId(itemName));
             el1.Click();
+
+            return new DetailsScreen(_driver);
+        }
+
+        internal NewCategoryScreen NavigateToNewCategory()
+        {
+            // Create new Category item first
+            var categoryButton = _driver.FindElement(MobileBy.AccessibilityId("AddCategory"));
+            categoryButton.Click();
+
+            return new NewCategoryScreen(_driver);
+        }
+
+        internal NewItemScreen NavigateToNewItem()
+        {
+            var el1 = _driver.FindElementByAccessibilityId("Add");
+            el1.Click();
+
+            return new NewItemScreen(_driver);
         }
 
         internal bool IsElementOnHomeScreen(string elementText)
@@ -120,82 +132,6 @@ namespace CarvedRock.UITests
 
         }
 
-        internal void AddNewItem()
-        {
-            var el1 = _driver.FindElementByAccessibilityId("Add");
-            el1.Click();
-
-            var elItemText = _driver.FindElementByAccessibilityId("ItemText");
-            elItemText.Clear();
-            elItemText.SendKeys("This is a new Item");
-
-            var elItemDetail = _driver.FindElementByAccessibilityId("ItemDescription");
-            elItemDetail.Clear();
-            elItemDetail.SendKeys("These are the details");
-
-            var elSave = _driver.FindElementByAccessibilityId("Save");
-            elSave.Click();
-
-        }
-
-        internal void WaitForProgressBar()
-        {
-            var wait = new DefaultWait<AndroidDriver<AppiumWebElement>>(_driver)
-            {
-                Timeout = TimeSpan.FromSeconds(60),
-                PollingInterval = TimeSpan.FromMilliseconds(500)
-            };
-            wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-
-            wait.Until(d => d.FindElement(MobileBy.AccessibilityId("Second item")));
-
-        }
-
-        internal void CreateNewItemWithNewCategory()
-        {
-            var el1 = _driver.FindElementByAccessibilityId("Add");
-            el1.Click();
-
-            var elItemText = _driver.FindElementByAccessibilityId("ItemText");
-            elItemText.Clear();
-            elItemText.SendKeys("This is a new Item");
-
-            var elItemDetail = _driver.FindElementByAccessibilityId("ItemDescription");
-            elItemDetail.Clear();
-            elItemDetail.SendKeys("These are the details");
-
-            var elItemCategory = _driver.FindElement(MobileBy.AccessibilityId("ItemCategory_Container"));
-            elItemCategory.Click();
-
-            var picker = _driver.FindElement(By.Id("android:id/contentPanel"));
-            var categoryListItems = picker.FindElements(By.ClassName("android.widget.TextView"));
-            foreach (var categoryElement in categoryListItems)
-            {
-                if (categoryElement.Text == "New category from automation")
-                    categoryElement.Click();
-            }
-
-
-            var elSave = _driver.FindElementByAccessibilityId("Save");
-            elSave.Click();
-
-        }
-
-        internal void AddNewCategory()
-        {
-                // Create new Category item first
-                var categoryButton = _driver.FindElement(MobileBy.AccessibilityId("AddCategory"));
-                categoryButton.Click();
-
-                // fill out the form for a new category
-                var categoryName = _driver.FindElement(MobileBy.AccessibilityId("categoryName"));
-                categoryName.Clear();
-                categoryName.SendKeys("New category from automation");
-
-                //save category
-                var saveCategory = _driver.FindElement(MobileBy.AccessibilityId("Save"));
-                saveCategory.Click();
-   
-        }
+ 
     }
 }
