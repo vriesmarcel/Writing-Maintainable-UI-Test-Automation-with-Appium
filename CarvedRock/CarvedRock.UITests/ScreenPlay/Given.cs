@@ -8,7 +8,6 @@ namespace CarvedRock.UITests.ScreenPlay
 {
     internal class Given
     {
-
         CarvedRockApplication _app;
 
         public Given(CarvedRockApplication app)
@@ -37,7 +36,6 @@ namespace CarvedRock.UITests.ScreenPlay
         {
             return new When(_app);
         }
-
 
     }
 }
