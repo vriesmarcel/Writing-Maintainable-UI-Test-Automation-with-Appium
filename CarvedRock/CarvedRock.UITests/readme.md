@@ -1,4 +1,4 @@
-# Companion Reporository for course "Writing Maintainable UI Test Automation with Appium"
+# Companion Repository for course "Writing Maintainable UI Test Automation with Appium"
 This repo contains the code samples I used in my Pluralsight course "Writing Maintainable UI Test Automation with Appium"
 The master branch contains the starting point of the course.
 
