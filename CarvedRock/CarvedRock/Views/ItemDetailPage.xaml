@@ -12,6 +12,8 @@
         <Label Text="{Binding Item.Text}" AutomationId="ItemText" d:Text="Item name" FontSize="Small"/>
         <Label Text="Description:" FontSize="Medium" />
         <Label Text="{Binding Item.Description}" AutomationId="ItemDescription" d:Text="Item description" FontSize="Small"/>
+        <Label Text="Category:" FontSize="Medium" />
+        <Label Text="{Binding Item.Category}" AutomationId="ItemCategory" d:Text="Item Category" FontSize="Small"/>
     </StackLayout>
     
 </ContentPage>

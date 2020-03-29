@@ -52,5 +52,10 @@ namespace CarvedRock.Views
             if (viewModel.Items.Count == 0)
                 viewModel.LoadItemsCommand.Execute(null);
         }
+
+        async void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushModalAsync(new NavigationPage(new AddCategory()));
+        }
     }
 }
